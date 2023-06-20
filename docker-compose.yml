@@ -1,20 +1,20 @@
 version: '3.8'
 services:
   php-apache-tallyho:
-    container_name: php-apache-tallyho
+    # container_name: php-apache-tallyho
     build:
         context: ./tallyho
         dockerfile: Dockerfile
+    image: php-apache-tallyho
     depends_on:
-        - dbservice
+        - mysql
     # volumes:
     #     - .:/var/www/
     ports:
         - 8000:80
     networks:
       - tallyho-lamp
-  dbservice:
-    container_name: dbservice
+  mysql:
     image: mysql:latest
     restart: always
     environment:
@@ -29,15 +29,15 @@ services:
     networks:
       - tallyho-lamp
   phpmyadmin:
-    image: phpmyadmin/phpmyadmin
+    image: phpmyadmin
     ports:
-        - '8080:80'
+        - '8050:80'
     restart: always
     environment:
-        PMA_HOST: dbService
+        PMA_HOST: mysql
         PMA_PORT: 3306
     depends_on:
-        - dbservice
+        - mysql
     networks:
       - tallyho-lamp
 networks:
