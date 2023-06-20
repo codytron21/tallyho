@@ -6,7 +6,7 @@ services:
         context: ./tallyho
         dockerfile: Dockerfile
     depends_on:
-        - dbService
+        - dbservice
     # volumes:
     #     - .:/var/www/
     ports:
@@ -37,7 +37,7 @@ services:
         PMA_HOST: dbService
         PMA_PORT: 3306
     depends_on:
-        - dbService
+        - dbservice
     networks:
       - tallyho-lamp
 networks:
