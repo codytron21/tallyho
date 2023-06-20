@@ -1,25 +1,31 @@
-FROM jenkins/jenkins:latest
+# FROM php:apache
+# COPY my-apache.conf /usr/local/apache2/conf/httpd.conf
+# RUN docker-php-ext-install mysqli && docker-php-ext-enable mysqli
+# RUN docker-php-ext-install pdo pdo_mysql && docker-php-ext-enable pdo_mysql
+# # COPY yii-framework.tar.gz /var/www/html/
+# # RUN tar -xvzf /var/www/html/yii-framework.tar.gz -C /var/www/html/
+# RUN chmod 755 /var/www/
+# RUN chown -R www-data:www-data /var/www/
+# RUN apt-get update && apt-get upgrade -y
 
-USER root
+FROM php:apache
 
-# Install Docker
-RUN apt-get update && apt-get install -y \
-    apt-transport-https \
-    ca-certificates \
-    curl \
-    gnupg \
-    lsb-release
+# Install the mysqli extension
+RUN docker-php-ext-install mysqli && \
+    docker-php-ext-enable mysqli
 
-RUN curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+RUN docker-php-ext-install pdo_mysql && \
+    docker-php-ext-enable pdo_mysql
 
-RUN echo \
-    "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian \
-    $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+# Set the document root
+ENV APACHE_DOCUMENT_ROOT /var/www/
 
-RUN apt-get update && apt-get install -y docker-ce-cli
+RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
 
-# Install Docker Compose
-RUN curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" \
-    -o /usr/local/bin/docker-compose
+RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
-RUN chmod +x /usr/local/bin/docker-compose
+# Copy your PHP application files to the container
+COPY . /var/www/
+
+# Set the correct permissions for the files
+RUN chown -R www-data:www-data /var/www/
