@@ -13,8 +13,8 @@ services:
         - 8000:80
     networks:
       - tallyho-lamp
-  dbService:
-    container_name: dbService
+  dbservice:
+    container_name: dbservice
     image: mysql:latest
     restart: always
     environment:
