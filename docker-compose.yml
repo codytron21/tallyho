@@ -1,22 +1,19 @@
 version: '3.8'
 services:
   php-apache-tallyho:
-    container_name: php-apache-tallyho
+    # container_name: php-apache-tallyho
     build:
         context: ./tallyho
         dockerfile: Dockerfile
-    # creating container by pulling image from ACR
-    # image: tallyho.azurecr.io/tallyho
     depends_on:
-        - dbService
+        - mysql
     # volumes:
     #     - .:/var/www/
     ports:
         - 8000:80
     networks:
       - tallyho-lamp
-  dbService:
-    container_name: dbService
+  mysql:
     image: mysql:latest
     restart: always
     environment:
@@ -31,15 +28,15 @@ services:
     networks:
       - tallyho-lamp
   phpmyadmin:
-    image: phpmyadmin/phpmyadmin
+    image: phpmyadmin
     ports:
         - '8050:80'
     restart: always
     environment:
-        PMA_HOST: dbService
+        PMA_HOST: mysql
         PMA_PORT: 3306
     depends_on:
-        - dbService
+        - mysql
     networks:
       - tallyho-lamp
 networks:
