@@ -5,6 +5,8 @@ services:
     build:
         context: ./tallyho
         dockerfile: Dockerfile
+    # creating container by pulling image from ACR
+    # image: tallyho.azurecr.io/tallyho
     depends_on:
         - dbService
     # volumes:
@@ -31,7 +33,7 @@ services:
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     ports:
-        - '8080:80'
+        - '8050:80'
     restart: always
     environment:
         PMA_HOST: dbService
